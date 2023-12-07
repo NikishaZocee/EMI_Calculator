@@ -4,7 +4,6 @@ import 'dart:math';
 void main() {
   runApp(EMICalculatorApp());
 }
-
 class EMICalculatorApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -15,16 +14,15 @@ class EMICalculatorApp extends StatelessWidget {
     );
   }
 }
-
 class EMICalculatorPage extends StatefulWidget {
   @override
   _EMICalculatorPageState createState() => _EMICalculatorPageState();
 }
 
 class _EMICalculatorPageState extends State<EMICalculatorPage> {
-  int principal = 0; // Set principal amount to 0
-  double interestRate = 0.0; // Set interest rate to 0.0
-  int tenureInMonths = 0; // Set tenure in months to 0
+  int principal = 0;
+  double interestRate = 0.0;
+  int tenureInMonths = 0;
 
   TextEditingController principalController = TextEditingController();
   TextEditingController interestRateController = TextEditingController();
@@ -49,7 +47,7 @@ class _EMICalculatorPageState extends State<EMICalculatorPage> {
   void _updateInterestRate(double value) {
     setState(() {
       interestRate = value;
-      interestRateController.text = value.toStringAsFixed(0); // Display as integer
+      interestRateController.text = value.toStringAsFixed(0);
     });
   }
 
@@ -112,257 +110,303 @@ class _EMICalculatorPageState extends State<EMICalculatorPage> {
 
     return Scaffold(
 
-      body: SingleChildScrollView(
+      body: SafeArea(
+        child: Container(
+          color: Color.fromRGBO(249, 180, 171, 100),
+          height: double.infinity,
 
-        padding: EdgeInsets.all(16.0),
+          child: SingleChildScrollView(
 
-        child: Column(
 
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+            padding: EdgeInsets.all(16.0),
 
-          children: [
-            SizedBox(height: 70),
+            child: Column(
 
-            Center(
-              child: Container(
-                width: 200,
-                height: 200,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
 
-                child: Stack(
-                  children: [
-                    TweenAnimationBuilder(
-                      tween: Tween(
-                        begin: 0.0,
-                        end: 1.0,
-                      ),
-                      duration: Duration(seconds: 7),
-                      builder: (context, value, child){
-                        return Container(
-                            color: Colors.white70,
-                            child: Center(
-                              child: Container(
-                                height: 200,
-                                width: 200,
-                                child: Stack(
-                                  children: [
-                                    ShaderMask(shaderCallback: (rect){
-                                      return SweepGradient(
-                                        startAngle: 0.0,
-                                        endAngle: 3.14*2,
-                                        stops: [value, value],
-                                        center: Alignment.center,
-                                        colors: [Colors.lightBlueAccent, Colors.white],
+              children: [
+                SizedBox(height: 70),
 
-                                      ).createShader(rect);
-                                    },
-                                      child: Container(
-                                        height: 200,
-                                        width: 200,
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: Colors.white,
-                                        ),
+                Center(
+                  child: Container(
+                    width: 400,
+                    height: 230,
+                    decoration: BoxDecoration( color: Colors.grey, borderRadius: BorderRadius.circular(20)),
+                    child: Container(
+                      width: 200,
+                      height: 200,
+
+                      child: Stack(
+                        children: [
+                          TweenAnimationBuilder(
+                            tween: Tween(
+                              begin: 0.0,
+                              end: 1.0,
+                            ),
+                            duration: Duration(seconds: 7),
+                            builder: (context, value, child){
+                              return Container(
+
+                                  child: Center(
+                                    child: Container(
+                                      height: 200,
+                                      width: 200,
+                                      child: Stack(
+                                        children: [
+                                          ShaderMask(shaderCallback: (rect){
+                                            return SweepGradient(
+                                              startAngle: 0.0,
+                                              endAngle: 3.14*2,
+                                              stops: [value, value],
+                                              center: Alignment.center,
+                                              colors: [Colors.red, Colors.white54],
+
+                                            ).createShader(rect);
+                                          },
+                                            child: Container(
+                                              height: 200,
+                                              width: 200,
+                                              decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                color: Colors.red,
+                                              ),
+                                            ),
+                                          ),
+                                          Center(
+                                            child: Container(
+                                              height: 160,
+                                              width: 160,
+                                              decoration: BoxDecoration(
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: Color.fromRGBO(246, 108, 108, 80),
+                                                    spreadRadius: 1,
+                                                    blurRadius:10,
+                                                  )
+                                                ],
+                                                  shape: BoxShape.circle,
+                                                  color: Color.fromRGBO(249, 180, 171, 250),
+                                              ),
+                                            ),
+                                          )
+                                        ],
                                       ),
                                     ),
-                                    Center(
-                                      child: Container(
-                                        height: 160,
-                                        width: 160,
-                                        decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: Colors.white60
-                                        ),
-                                      ),
-                                    )
-                                  ],
-                                ),),
-                            )
-                        );
-                      },
+                                  )
+                              );
+                            },
+                          ),
+                          Center(
+                            child: Text(
+                              'Rs.${_calculateEMI().toStringAsFixed(0)}',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    Center(
-                      child: Text(
-                        'Rs.${_calculateEMI().toStringAsFixed(0)}',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _buildPieItem('Interest', _calculateEMI() * tenureInMonths - principal, principal / (_calculateEMI() * tenureInMonths) * 100),
+                    _buildPieItem('Principal', principal.toDouble(), (_calculateEMI() * tenureInMonths - principal) / (_calculateEMI() * tenureInMonths) * 100),
+                  ],
+                ),
+                SizedBox(height: 30),
+                
+
+
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Flexible(
+                      flex: 3,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Text(
+                            'Loan Amount:',
+                            style: TextStyle(fontSize: 18, color:  Colors.black, fontWeight: FontWeight.normal ),
+                          ),
+                          Slider(
+                            activeColor: Colors.red,
+                            inactiveColor: Colors.white,
+                            value: principal.toDouble(),
+                            min: 0,
+                            max: 5000000,
+                            divisions: 200,
+                            label: principal.toString(),
+
+                            onChanged: (value) => _updatePrincipal(value.round()),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Flexible(
+                      flex: 2,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 16.0),
+                        child: TextField(
+                          controller: principalController,
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            labelText: 'Amount',
+                            border: OutlineInputBorder(),
+                          ),
+
                         ),
                       ),
                     ),
                   ],
                 ),
-              ),
-            ),
-            SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildPieItem('Interest', _calculateEMI() * tenureInMonths - principal, principal / (_calculateEMI() * tenureInMonths) * 100),
-                _buildPieItem('Principal', principal.toDouble(), (_calculateEMI() * tenureInMonths - principal) / (_calculateEMI() * tenureInMonths) * 100),
-              ],
-            ),
-            SizedBox(height: 30),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Flexible(
-                  flex: 3,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Text(
-                        'Loan Amount:',
-                        style: TextStyle(fontSize: 18),
-                      ),
-                      Slider(
-                        value: principal.toDouble(),
-                        min: 0,
-                        max: 5000000,
-                        divisions: 200, // Reduced the divisions for smooth slider movement
-                        onChanged: (value) => _updatePrincipal(value.round()), // Round the value to an integer
-                      ),
-                    ],
-                  ),
-                ),
-                Flexible(
-                  flex: 2,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 16.0),
-                    child: TextField(
-                      controller: principalController,
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                        labelText: 'Amount',
-                        border: OutlineInputBorder(),
-                      ),
-                      onChanged: (text) {
-                        if (text.isEmpty) return;
-                        int value = int.tryParse(text) ?? 0;
-                        if (value > 0) {
-                          _updatePrincipal(value);
-                        }
-                      },
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Flexible(
-                  flex: 3,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Text(
-                        'Interest Rate:',
-                        style: TextStyle(fontSize: 18),
-                      ),
-                      Slider(
-                        value: interestRate,
-                        min: 0,
-                        max: 20,
-                        divisions: 20,
-                        onChanged: _updateInterestRate,
-                      ),
-                    ],
-                  ),
-                ),
-                Flexible(
-                  flex: 2,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 16.0),
-                    child: TextField(
-                      controller: interestRateController,
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                        labelText: 'Rate (%)',
-                        border: OutlineInputBorder(),
-                      ),
-                      onChanged: (text) {
-                        if (text.isEmpty) return;
-                        double value = double.tryParse(text) ?? 0;
-                        if (value > 0) {
-                          _updateInterestRate(value);
-                        }
-                      },
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Flexible(
-                  flex: 3,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Text(
-                        'Loan Tenure:',
-                        style: TextStyle(fontSize: 18),
-                      ),
-                      Slider(
-                        value: tenureInMonths.toDouble(),
-                        min: 0,
-                        max: 60,
-                        divisions: 54, // Reduced the divisions for smooth slider movement
-                        onChanged: (value) => _updateTenure(value.round()), // Round the value to an integer
-                      ),
-                    ],
-                  ),
-                ),
-                Flexible(
-                  flex: 2,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 16.0),
-                    child: TextField(
-                      controller: tenureController,
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                        labelText: 'Tenure (months)',
-                        border: OutlineInputBorder(),
-                      ),
-                      onChanged: (text) {
-                        if (text.isEmpty) return;
-                        int value = int.tryParse(text) ?? 0;
-                        if (value > 0) {
-                          _updateTenure(value);
-                        }
-                      },
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                if (principal > 0 && interestRate > 0 && tenureInMonths > 0) {
-                  _calculateAndShowEMI();
-                } else {
-                  showDialog(context: context, builder: (context){
-                    return Container(
-                      child: AlertDialog(
-                        title: Text("Please enter valid values"),
-                        actions: [
-                          TextButton(onPressed: (){
-                            Navigator.pop(context);
-                          },
-                              child: Text("Okay"))
+                SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Flexible(
+                      flex: 3,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Text(
+                            'Interest Rate:',
+                            style: TextStyle(fontSize: 18, color: Colors.black),
+                          ),
+                          Slider(
+                            activeColor: Colors.red,
+                            inactiveColor: Colors.white,
+                            value: interestRate,
+                            min: 0,
+                            max: 20,
+                            divisions: 20,
+                            label: interestRate.toStringAsFixed(0),
+                            onChanged: _updateInterestRate,
+                          ),
                         ],
                       ),
-                    );
-                  });
-                }
-              },
-              child: Text('EMI Details'),
+                    ),
+                    Flexible(
+                      flex: 2,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 16.0),
+                        child: TextField(
+                          controller: interestRateController,
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            labelText: 'Rate (%)',
+                            border: OutlineInputBorder(),
+                          ),
+
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Flexible(
+                      flex: 3,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Text(
+                            'Loan Tenure:',
+                            style: TextStyle(fontSize: 18, color: Colors.black, ),
+                          ),
+                          Slider(
+                            activeColor: Colors.red,
+                            inactiveColor: Colors.white,
+                            value: tenureInMonths.toDouble(),
+                            min: 0,
+                            max: 60,
+                            divisions: 54,
+                            label: tenureInMonths.toString(),
+                            onChanged: (value) => _updateTenure(value.round()),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Flexible(
+                      flex: 2,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 16.0),
+                        child: TextField(
+                          controller: tenureController,
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            labelText: 'Tenure (months)',
+                            border: OutlineInputBorder(),
+                          ),
+
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 20),
+                InkWell(
+                    onTap: () {
+                      if (principal > 0 && interestRate > 0 && tenureInMonths > 0) {
+                        _calculateAndShowEMI();
+                      } else {
+                        showDialog(context: context, builder: (context){
+                          return Container(
+                            child: AlertDialog(
+                              title: Text("Please enter valid values"),
+                              actions: [
+                                TextButton(onPressed: (){
+                                  Navigator.pop(context);
+                                },
+                                    child: Text("Close"))
+                              ],
+                            ),
+                          );
+                        });
+                      }
+                    },
+                    child: Center(
+                      child: Container(
+                        height: 50,
+                        width: 500,
+                        decoration: BoxDecoration(
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black,
+                                spreadRadius: 1,
+                                blurRadius:10,
+                              )
+                            ],
+                          borderRadius: BorderRadius.circular(10), color: Colors.red
+                        ),
+
+                        child: Center(child: Text('EMI Details', style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold
+                        ),
+                        )
+                        ),
+
+                    ),
+                  )
+
+
+
+                ),
+
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -375,15 +419,23 @@ class _EMICalculatorPageState extends State<EMICalculatorPage> {
           width: 80,
           height: 80,
           decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: Colors.red,
+                spreadRadius: 1,
+                blurRadius:10,
+              )
+            ],
             shape: BoxShape.circle,
-            color: percentage == 0 ? Colors.transparent : Colors.blueAccent,
+            color: percentage == 0 ? Colors.transparent : Color.fromRGBO(249, 180, 171, 10),
           ),
           child: Center(
             child: Text(
               'Rs.${amount.toStringAsFixed(0)}',
               style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.normal,
+                color: Color.fromRGBO(194, 20, 20, 50),
+                fontWeight: FontWeight.bold
+                ,
                 fontSize: 12,
               ),
             ),
